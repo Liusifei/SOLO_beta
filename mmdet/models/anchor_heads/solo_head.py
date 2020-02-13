@@ -120,7 +120,7 @@ class SoloHead(nn.Module):
 			nn.Conv2d(self.feat_channels, self.grid_num[1]**2, 1, stride=1, padding=0),
 			nn.Conv2d(self.feat_channels, self.grid_num[2]**2, 1, stride=1, padding=0),
 			nn.Conv2d(self.feat_channels, self.grid_num[3]**2, 1, stride=1, padding=0),
-			nn.Conv2d(self.feat_channels, self.grid_num[3]**2, 1, stride=1, padding=0)
+			nn.Conv2d(self.feat_channels, self.grid_num[4]**2, 1, stride=1, padding=0)
 			])
 
 		
@@ -254,10 +254,9 @@ class SoloHead(nn.Module):
 				gt_bboxes_ignore=None):
 		assert len(cls_scores) == len(mask_preds)
 		_, _, b_h, b_w = mask_preds[0].shape
-		_, _, b_h4, b_w4 = mask_preds[4].shape
+		_, _, b_h3, b_w3 = mask_preds[3].shape
 
-		# mask_preds[0] = F.upsample_bilinear(mask_preds[0], (int(b_h / 2), int(b_w / 2)))
-		mask_preds[4] = F.upsample_bilinear(mask_preds[4], (int(b_h4 * 2), int(b_w4 * 2)))
+		mask_preds[4] = F.upsample_bilinear(mask_preds[4], (b_h3, b_w3))
 
 		# pdb.set_trace()
 
@@ -383,75 +382,78 @@ class SoloHead(nn.Module):
 
    
 	def get_bboxes_logi(self,cls_scores, mask_preds, img_metas, cfg, rescale=None, score_thr=True):
-	   _, _, b_h, b_w = mask_preds[0].shape
-	   crop_h, crop_w, _ = img_metas[0]['img_shape']
-	   ori_h, ori_w, _ = img_metas[0]['ori_shape']
-	   cls_scores_ori = []
-	   for i in range(5):
-		  cls_sc = cls_scores[i].clone().detach()
-		  cls_sc = F.upsample_bilinear(cls_sc, (ori_h, ori_w))
-		  cls_scores_ori.append(cls_sc)
-	   # cat dim: default 0
-	   if self.use_sigmoid:
-		  flatten_cls_scores = torch.cat([cls_score.permute(0, 2, 3, 1).reshape(-1, self.cls_out_channels) for cls_score in cls_scores]).sigmoid()
-	   else:
-		  flatten_cls_scores = torch.cat([cls_score.permute(0, 2, 3, 1).reshape(-1, self.cls_out_channels) for cls_score in cls_scores]).softmax(dim=1)
-		  flatten_cls_scores = flatten_cls_scores[:,1:]  
-	   for i in range(5):
-		  mask_preds[i] = F.upsample_bilinear(mask_preds[i],(b_h,b_w))
-	   mask_preds = torch.cat(mask_preds,dim=1)[0]
-	   # logit and class (per pixel)
-	   scores, labels = torch.max(flatten_cls_scores,dim=-1)
-	   nms_pre = cfg.get('nms_pre', -1)
-	   if score_thr:
-		  score_thr = cfg.get('score_thr', -1)
-	   else:
-		  score_thr = 0
-	   mask_thr = cfg.get('mask_thr_binary',-1)
-	   det_masks = np.array([])
-	   det_bboxes = np.zeros((0,5))
-	   det_labels = np.zeros(0).astype(int)
-	   # store feature scale
-	   sc_ind = []
-	   for i in range(5):
-		  sc_ind.append(torch.zeros((self.grid_num[i] ** 2, 1)) + i)
-	   sc_ind = torch.cat(sc_ind, axis=0)
-	   if nms_pre > 0 and len(scores) >=1 and scores.max() > score_thr:
-		  # HERE: need to change scores for softmax
-		  valid_inds = torch.nonzero(scores >= score_thr).squeeze()
-		  if valid_inds.dim()!=0:
-			 scores = scores[valid_inds]
-			 labels = labels[valid_inds]
-			 mask_preds = mask_preds[valid_inds]
-			 sc_ind = sc_ind[valid_inds]
-			 if scores.shape[0] < nms_pre:
-				nms_pre = scores.shape[0]
-			 _, topk_inds = scores.topk(nms_pre)
-			 scores = scores[topk_inds]
-			 labels = labels[topk_inds]
-			 mask_preds = mask_preds[topk_inds]
-			 sc_ind = sc_ind[topk_inds]
-			 mask_preds = F.upsample_bilinear(mask_preds.unsqueeze(0), (b_h*self.strides[0], b_w*self.strides[0]))
-			 mask_preds = mask_preds[:, :, :crop_h, :crop_w]
-			 mask_preds = F.sigmoid(F.upsample_bilinear(mask_preds, (ori_h, ori_w)))[0]
-			 mask_preds = mask_preds > mask_thr
-			 masks = self.nms(scores, labels, mask_preds, sc_ind, cfg.nms.iou_thr)
-			 n = len(masks)
-			 det_masks = []
-			 det_bboxes = np.zeros((n, 5))
-			 det_labels = np.zeros(n).astype(int)
-			 det_scs = np.zeros(n).astype(int)
-			 for i in range(n):
-				det_bboxes[i, -1] = masks[i][-1]
-				det_labels[i] = masks[i][-2]
-				det_masks.append(masks[i][0])
-				det_scs[i] = masks[i][-1]
-			 det_masks = np.array(det_masks)
+		_, _, b_h, b_w = mask_preds[0].shape
+		crop_h, crop_w, _ = img_metas[0]['img_shape']
+		ori_h, ori_w, _ = img_metas[0]['ori_shape']
+		cls_scores_ori = []
+		for i in range(5):
+			cls_sc = cls_scores[i].clone().detach()
+			cls_sc = F.upsample_bilinear(cls_sc, (ori_h, ori_w))
+			cls_scores_ori.append(cls_sc)
+		# cat dim: default 0
+		if self.use_sigmoid:
+			flatten_cls_scores = torch.cat([cls_score.permute(0, 2, 3, 1).reshape(-1, self.cls_out_channels) for cls_score in cls_scores]).sigmoid()
+		else:
+			flatten_cls_scores = torch.cat([cls_score.permute(0, 2, 3, 1).reshape(-1, self.cls_out_channels) for cls_score in cls_scores]).softmax(dim=1)
+			flatten_cls_scores = flatten_cls_scores[:,1:]  
+		for i in range(5):
+			mask_preds[i] = F.upsample_bilinear(mask_preds[i],(b_h,b_w))
+		mask_preds = torch.cat(mask_preds,dim=1)[0]
+		# logit and class (per pixel)
+		scores, labels = torch.max(flatten_cls_scores,dim=-1)
+		nms_pre = cfg.get('nms_pre', -1)
+		if score_thr:
+			score_thr = cfg.get('score_thr', -1)
+		else:
+			score_thr = 0
+		mask_thr = cfg.get('mask_thr_binary',-1)
+		det_masks = np.array([])
+		det_bboxes = np.zeros((0,5))
+		det_labels = np.zeros(0).astype(int)
+		# store feature scale
+		sc_ind = []
+		for i in range(5):
+			sc_ind.append(torch.zeros((self.grid_num[i] ** 2, 1)) + i)
+		sc_ind = torch.cat(sc_ind, axis=0)
+		if nms_pre > 0 and len(scores) >=1 and scores.max() > score_thr:
+			# HERE: need to change scores for softmax
+			valid_inds = torch.nonzero(scores >= score_thr).squeeze()
+			if valid_inds.dim()!=0:
+				scores = scores[valid_inds]
+				labels = labels[valid_inds]
+				mask_preds = mask_preds[valid_inds]
+				sc_ind = sc_ind[valid_inds]
 
-			 if self.out_path is not None:
-			 	self.infer_vis(img_metas, cls_scores, det_masks, det_bboxes, det_labels, det_scs, out_path=self.out_path)
+				if scores.shape[0] < nms_pre:
+					nms_pre = scores.shape[0]
 
-	   return det_bboxes, det_labels, det_masks
+				_, topk_inds = scores.topk(nms_pre)
+				scores = scores[topk_inds]
+				labels = labels[topk_inds]
+				mask_preds = mask_preds[topk_inds]
+				sc_ind = sc_ind[topk_inds]
+				mask_preds = F.upsample_bilinear(mask_preds.unsqueeze(0), (b_h*self.strides[0], b_w*self.strides[0]))
+				mask_preds = mask_preds[:, :, :crop_h, :crop_w]
+				mask_preds = F.sigmoid(F.upsample_bilinear(mask_preds, (ori_h, ori_w)))[0]
+				mask_preds = mask_preds > mask_thr
+				masks = self.nms(scores, labels, mask_preds, sc_ind, cfg.nms.iou_thr)
+				n = len(masks)
+				det_masks = []
+				det_bboxes = np.zeros((n, 5))
+				det_labels = np.zeros(n).astype(int)
+				det_scs = np.zeros(n).astype(int)
+
+				for i in range(n):
+					det_bboxes[i, -1] = masks[i][-1]
+					det_labels[i] = masks[i][-2]
+					det_masks.append(masks[i][0])
+					det_scs[i] = masks[i][-1]
+				det_masks = np.array(det_masks)
+
+				if self.out_path is not None:
+					self.infer_vis(img_metas, cls_scores, det_masks, det_bboxes, det_labels, det_scs, out_path=self.out_path)
+
+			return det_bboxes, det_labels, det_masks
 
 
 	@force_fp32(apply_to=('cls_scores', 'mask_preds'))
@@ -525,8 +527,8 @@ class SoloHead(nn.Module):
 						det_scs[i] = masks[i][-1]
 					det_masks = np.array(det_masks)
 
-					 if self.out_path is not None:
-					 	self.infer_vis(img_metas, cls_scores, det_masks, det_bboxes, det_labels, det_scs, out_path=self.out_path)
+					if self.out_path is not None:
+						self.infer_vis(img_metas, cls_scores, det_masks, det_bboxes, det_labels, det_scs, out_path=self.out_path)
 
 		return det_bboxes, det_labels, det_masks
 
@@ -564,6 +566,7 @@ class SoloHead(nn.Module):
 						j = 0
 						for i in range(len(masks)):
 							i -= j
-							if self.iou_calc(best_mask[0], masks[i][0]) > iou_threshold:masks.pop(i)
+							if self.iou_calc(best_mask[0], masks[i][0]) > iou_threshold:
+								masks.pop(i)
 								j += 1
 		return return_mask

@@ -1,12 +1,11 @@
 Metadata-Version: 1.1
 Name: mmdet
-Version: 1.0rc1+ed620ef
+Version: 1.0rc1+a7f7ee6
 Summary: Open MMLab Detection Toolbox and Benchmark
 Home-page: https://github.com/open-mmlab/mmdetection
 Author: OpenMMLab
 Author-email: chenkaidev@gmail.com
 License: Apache License 2.0
-Description-Content-Type: UNKNOWN
 Description: # SOLO
         The code is an unofficial pytorch implementation of [SOLO: Segmenting Objects by Locations](https://arxiv.org/abs/1912.04488)
         

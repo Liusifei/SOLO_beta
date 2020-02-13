@@ -9,6 +9,8 @@ import torch
 import torch.distributed as dist
 from mmcv.parallel import MMDataParallel, MMDistributedDataParallel
 from mmcv.runner import get_dist_info, load_checkpoint
+from mmdet.models.utils import ins_gt_color
+from mmcv.image import imread, imwrite
 
 from mmdet.apis import init_dist
 from mmdet.core import coco_eval, results2json, wrap_fp16_model
@@ -22,20 +24,42 @@ def single_gpu_test(model, data_loader, show=False, eval_num=None):
     dataset = data_loader.dataset
     prog_bar = mmcv.ProgressBar(len(dataset))
     for i, data in enumerate(data_loader):
-        # pdb.set_trace()
-        if eval_num is not None and i>=eval_num:
+        if eval_num is not None and i >= eval_num:
             break
+        if show:
+            # model.module.show_result(data, result)
+            # model.module.show_result(data, result, dataset.img_norm_cfg)
+            ins_all, cls_all, img_name = ins_gt_color(data)
+
+            level_num = len(ins_all)
+            out_folder = os.path.join('vis_tmp_gt/', img_name)
+            out_folder_cls = os.path.join('vis_tmp_gt/', img_name+'_cls')
+
+            if not os.path.exists(out_folder):
+                os.makedirs(out_folder)
+            if not os.path.exists(out_folder_cls):
+                os.makedirs(out_folder_cls)
+
+            for j in range(level_num):
+                out_name = os.path.join(out_folder, "%02d"%(j)+'.jpg')
+                out_name_cls = os.path.join(out_folder_cls, "%02d"%(j)+'.jpg')
+                imwrite(ins_all[j], out_name)
+                if len(cls_all) > 0:
+                    imwrite(cls_all[j], out_name_cls)
+
+        del data['gt_labels']
+        del data['gt_masks']
+        del data['gt_bboxes']
+        del data['category_targets']
+        del data['point_ins']
         with torch.no_grad():
             result = model(return_loss=False, rescale=not show, **data)
         results.append(result)
-        pdb.set_trace()
-        if show:
-            model.module.show_result(data, result)
-            #model.module.show_result(data, result, dataset.img_norm_cfg)
 
         batch_size = data['img'][0].size(0)
         for _ in range(batch_size):
             prog_bar.update()
+
     return results
 
 
@@ -119,7 +143,7 @@ def parse_args():
         nargs='+',
         choices=['proposal', 'proposal_fast', 'bbox', 'segm', 'keypoints'],
         help='eval types')
-    parser.add_argument('--show', action='store_true', default=False, help='show results')
+    parser.add_argument('--show', action='store_true', help='show results')
     parser.add_argument('--tmpdir', help='tmp dir for writing some results')
     parser.add_argument(
         '--launcher',

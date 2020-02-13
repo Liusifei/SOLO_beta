@@ -143,10 +143,28 @@ class CustomSoloDataset(Dataset):
         results=self.pipeline(results)
         return results
 
+    # def prepare_test_img(self, idx):
+    #     img_info = self.img_infos[idx]
+    #     results = dict(img_info=img_info)
+    #     if self.proposals is not None:
+    #         results['proposals'] = self.proposals[idx]
+    #     self.pre_pipeline(results)
+    #     return self.pipeline(results)
+
     def prepare_test_img(self, idx):
         img_info = self.img_infos[idx]
-        results = dict(img_info=img_info)
+        ann_info = self.get_ann_info(idx)
+
+
+        if ann_info['bboxes'] is None:
+            ann_info['bboxes'] = np.zeros((1, 4)).astype('float')
+            ann_info['labels'] = np.zeros((1, 1)).astype('float')
+            ann_info['masks'] = [[float(0)]]
+        results = dict(img_info=img_info, ann_info=ann_info)
         if self.proposals is not None:
             results['proposals'] = self.proposals[idx]
         self.pre_pipeline(results)
-        return self.pipeline(results)
+
+        results = self.pipeline(results)
+
+        return results

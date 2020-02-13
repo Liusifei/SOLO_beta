@@ -32,7 +32,9 @@ model = dict(
             use_sigmoid=True,
             gamma=2.0,
             alpha=0.25,
-            loss_weight=1.0)))
+            loss_weight=1.0),
+        # out_path='vis_tmp_ins'
+        ))
 # training and testing settings
 train_cfg = dict(
     assigner=dict(
@@ -71,6 +73,7 @@ train_pipeline = [
 ]
 test_pipeline = [
     dict(type='LoadImageFromFile'),
+    dict(type='LoadAnnotations', with_bbox=True, with_mask=True, skip_img_without_anno=False),
     dict(
         type='MultiScaleFlipAug',
         img_scale=(1333, 800),
@@ -80,8 +83,10 @@ test_pipeline = [
             dict(type='RandomFlip', flip_ratio=0),
             dict(type='Normalize', **img_norm_cfg),
             dict(type='Pad', size_divisor=32),
+            dict(type='SoloTrainTrans'),
             dict(type='ImageToTensor', keys=['img']),
-            dict(type='Collect', keys=['img']),
+            dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels', 'gt_masks','category_targets','point_ins']),
+
         ])
 ]
 data = dict(

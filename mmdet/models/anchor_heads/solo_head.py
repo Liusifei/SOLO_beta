@@ -13,7 +13,7 @@ import pdb
 from PIL import Image
 import os
 
-CLASSES = ('person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus',
+CLASSES = ('back', 'person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus',
 		   'train', 'truck', 'boat', 'traffic_light', 'fire_hydrant',
 		   'stop_sign', 'parking_meter', 'bench', 'bird', 'cat', 'dog',
 		   'horse', 'sheep', 'cow', 'elephant', 'bear', 'zebra', 'giraffe',
@@ -358,18 +358,18 @@ class SoloHead(nn.Module):
 			img2 = Image.fromarray(ins_all[i])
 			out_name = os.path.join(out_, "%03d"%(i) + '_' + 'scale'+str(scs_sort[i]) + '.jpg')
 			img2.save(out_name)
-			
-		 # for i in range(det_masks_int.shape[0]):
-		 #  mas = det_masks_int[i]
-		 #  lab = det_labels[i]
-		 #  cls_ = CLASSES[lab]
-		 #  img_clone = img.copy()
-		 #  img_clone[:,:,0][mas==1] = 255
-		 #  img2 = Image.fromarray(img_clone)
-		 #
-		 #  out_name = os.path.join(out_, '{}_'.format(cls_) + str(i) + '.jpg')
-		 #  img2.save(out_name)
-		 # # ==================vis====================
+
+		# for i in range(det_masks_int.shape[0]):
+		#  mas = det_masks_int[i]
+		#  lab = det_labels[i]
+		#  cls_ = CLASSES[lab]
+		#  img_clone = img.copy()
+		#  img_clone[:,:,0][mas==1] = 255
+		#  img2 = Image.fromarray(img_clone)
+		#
+		#  out_name = os.path.join(out_, '{}_'.format(cls_) + str(i) + '.jpg')
+		#  img2.save(out_name)
+		# # ==================vis====================
 
 
 	@force_fp32(apply_to=('cls_scores', 'mask_preds'))
@@ -436,6 +436,7 @@ class SoloHead(nn.Module):
 				mask_preds = mask_preds[:, :, :crop_h, :crop_w]
 				mask_preds = F.sigmoid(F.upsample_bilinear(mask_preds, (ori_h, ori_w)))[0]
 				mask_preds = mask_preds > mask_thr
+
 				masks = self.nms(scores, labels, mask_preds, sc_ind, cfg.nms.iou_thr)
 				n = len(masks)
 				det_masks = []
@@ -453,7 +454,7 @@ class SoloHead(nn.Module):
 				if self.out_path is not None:
 					self.infer_vis(img_metas, cls_scores, det_masks, det_bboxes, det_labels, det_scs, out_path=self.out_path)
 
-			return det_bboxes, det_labels, det_masks
+		return det_bboxes, det_labels, det_masks
 
 
 	@force_fp32(apply_to=('cls_scores', 'mask_preds'))
@@ -490,7 +491,7 @@ class SoloHead(nn.Module):
 		# store feature scale
 		sc_ind = []
 		for i in range(5):
-		  sc_ind.append(torch.zeros((self.grid_num[i] ** 2, 1)) + i)
+			sc_ind.append(torch.zeros((self.grid_num[i] ** 2, 1)) + i)
 		sc_ind = torch.cat(sc_ind, axis=0)
 		if nms_pre > 0 and len(scores) >=1 and scores.max() > score_thr:
 			# valid_inds: FG indexes
@@ -506,7 +507,7 @@ class SoloHead(nn.Module):
 					scores = scores[topk]
 					labels = labels[topk]
 					mask_preds = mask_preds[topk]
-					sc_ind = sc_ind[topk_inds]
+					sc_ind = sc_ind[topk]
 					labels -= 1
 					mask_preds = F.upsample_bilinear(mask_preds.unsqueeze(0), (b_h*self.strides[0], b_w*self.strides[0]))
 					mask_preds = mask_preds[:, :, :crop_h, :crop_w]
@@ -549,11 +550,11 @@ class SoloHead(nn.Module):
 		n = len(labels)
 		if n > 0:
 			masks_dict = {}
-		for i in range(n):
-			if labels[i].item() in masks_dict:
-				masks_dict[labels[i].item()].append([masks[i],labels[i],scores[i],sc_ind[i]])
-			else:
-				masks_dict[labels[i].item()] = [[masks[i],labels[i],scores[i],sc_ind[i]]]
+			for i in range(n):
+				if labels[i].item() in masks_dict:
+					masks_dict[labels[i].item()].append([masks[i],labels[i],scores[i],sc_ind[i]])
+				else:
+					masks_dict[labels[i].item()] = [[masks[i],labels[i],scores[i],sc_ind[i]]]
 			for masks in masks_dict.values():
 				if len(masks) == 1:
 					return_mask.append(masks[0])

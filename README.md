@@ -51,8 +51,12 @@ The code only implements the simplest version of SOLO:
 `flatten_cls_scores`: flattened w.r.t. all images and all levels
 
 `loss_cls = self.loss_cls(flatten_cls_scores, category_targets, avg_factor=num_pos + num_imgs)`
- - [x] Mask (cleared): per-instance dict_loss, ave over all instances in a batch
+ - [x] Mask: per-instance dict_loss, ave over all instances in a batch
+ 
+ `loss_mask[j,i] = self.dict_loss_batch(pred_mask, ins_mask)`
 
+`loss_mask = self.dict_weight * torch.mean(loss_mask)`
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTcyNzU0OTk1NiwxNTcwMDYzMTg5XX0=
+eyJoaXN0b3J5IjpbLTcxMTIzMTg0NiwxNzI3NTQ5OTU2LDE1Nz
+AwNjMxODldfQ==
 -->

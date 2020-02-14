@@ -56,7 +56,8 @@ The code only implements the simplest version of SOLO:
  `loss_mask[j,i] = self.dict_loss_batch(pred_mask, ins_mask)`
 
 `loss_mask = self.dict_weight * torch.mean(loss_mask)`
+
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTcxMTIzMTg0NiwxNzI3NTQ5OTU2LDE1Nz
-AwNjMxODldfQ==
+eyJoaXN0b3J5IjpbMTQzOTU4MTc2OCwtNzExMjMxODQ2LDE3Mj
+c1NDk5NTYsMTU3MDA2MzE4OV19
 -->

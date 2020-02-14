@@ -41,11 +41,12 @@ The code only implements the simplest version of SOLO:
 2020-02-14 02:46:23,707 - INFO - Epoch [1][800/7330]	lr: 0.01000, eta: 23:32:05, time: 0.989, data_time: 0.084, memory: 7960, loss_cls: 0.5828, loss_mask: 1.4481, loss: 2.0308
 ```
 ## Dev Logs
-
+#### Network logic
+![](https://files.slack.com/files-pri/T04SYRAP3-FTPT91LCR/image.png)
 
 
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTMxODQyODQ3N119
+eyJoaXN0b3J5IjpbMTA5MTYwNjZdfQ==
 -->

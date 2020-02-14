@@ -1,4 +1,4 @@
-# SOLO
+# SOLO 
 The code is an unofficial pytorch implementation of [SOLO: Segmenting Objects by Locations](https://arxiv.org/abs/1912.04488)
 
 
@@ -35,3 +35,6 @@ Both good and bad results:
 
 
 
+<!--stackedit_data:
+eyJoaXN0b3J5IjpbLTEyOTMwNTUxMzVdfQ==
+-->

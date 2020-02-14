@@ -45,10 +45,10 @@ The code only implements the simplest version of SOLO:
 ![](https://files.slack.com/files-pri/T04SYRAP3-FTPT91LCR/image.png)
 ### Details
 - Classification: 
-`flatten_cls_scores`: all 
+`flatten_cls_scores`: flattened w.r.t. all images and all levels
 `loss_cls = self.loss_cls(flatten_cls_scores, category_targets, avg_factor=num_pos + num_imgs)`
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTIwMjY4MTgxOTldfQ==
+eyJoaXN0b3J5IjpbMTYxMzgzNDEwMF19
 -->

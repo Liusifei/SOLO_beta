@@ -43,7 +43,7 @@ The code only implements the simplest version of SOLO:
 ## Dev Logs
 ### Network logic (need to check)
 ![](docs/network.png)
-### Details
+### Details (need to check)
  - [ ] Classification:
 `flatten_cls_scores`: flattened w.r.t. all images and all levels
 
@@ -51,5 +51,5 @@ The code only implements the simplest version of SOLO:
  - [x] Mask (cleared): per-instance dict_loss, ave over all instances in a batch
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTM4NTY5NTQ3NCwxNTcwMDYzMTg5XX0=
+eyJoaXN0b3J5IjpbNjg3NzkzNzc4LDE1NzAwNjMxODldfQ==
 -->

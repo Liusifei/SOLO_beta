@@ -32,6 +32,10 @@
 2020-02-14 03:39:16,872 - INFO - Epoch [1][500/7330]	lr: 0.00999, eta: 2 days, 3:18:43, time: 0.663, data_time: 0.042, memory: 8753, loss_cls: 0.6697, loss_mask: 1.9991, loss: 2.6688
 ```
 
+ - [ ] **Class branch w CE**
+ `root@1038535:/instance_v1/SOLO_OURS# ./tools/dist_train.sh configs/solo/r50_p2_p6_match_CE.py 8 --work_dir r50_p2_p6_match_CE_3X`
+
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE1NTMyNzY5OTRdfQ==
+eyJoaXN0b3J5IjpbLTEwODgyMjI3ODEsLTE1NTMyNzY5OTRdfQ
+==
 -->

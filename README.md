@@ -8,8 +8,10 @@ The code is based on [mmdetection](https://github.com/open-mmlab/mmdetection). P
 ## Training 
 ### Basic
 Follows the same way as mmdetection.
-single GPU: ```python tools/train.py configs/solo/r50_p2_p6_match_ml.py 8 --work_dir r50_p2_p6_match_ml'''
-multi GPU (for example 8): ./tools/dist_train.sh configs/solo/r50_p2_p6_match_ml.py 8 --work_dir r50_p2_p6_match_ml
+single GPU: (for pdb debug)
+```python tools/train.py configs/solo/r50_p2_p6_match_ml.py --work_dir r50_p2_p6_match_ml```
+multi GPU (for example 8): 
+```./tools/dist_train.sh configs/solo/r50_p2_p6_match_mlaug.py 8 --work_dir r50_p2_p6_match_ml_3X```
 
 ## Notes
 
@@ -35,5 +37,5 @@ Both good and bad results:
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTYwNzkzNTY2N119
+eyJoaXN0b3J5IjpbMTI5NTc1NTk0Ml19
 -->

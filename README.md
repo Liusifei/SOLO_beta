@@ -1,4 +1,4 @@
-# SOLO 
+# SOLO unofficial
 The code is an unofficial pytorch implementation of [SOLO: Segmenting Objects by Locations](https://arxiv.org/abs/1912.04488)
 
 
@@ -6,11 +6,10 @@ The code is an unofficial pytorch implementation of [SOLO: Segmenting Objects by
 The code is based on [mmdetection](https://github.com/open-mmlab/mmdetection). Please check [Install.md](https://github.com/open-mmlab/mmdetection/blob/master/docs/INSTALL.md) for installation instructions.
 
 ## Training 
+### Basic
 Follows the same way as mmdetection.
-
-single GPU: python tools/train.py configs/solo/r50.py
-
-multi GPU (for example 8): ./tools/dist_train.sh configs/solo/r50.py 8 
+single GPU: ```python tools/train.py configs/solo/r50_p2_p6_match_ml.py 8 --work_dir r50_p2_p6_match_ml'''
+multi GPU (for example 8): ./tools/dist_train.sh configs/solo/r50_p2_p6_match_ml.py 8 --work_dir r50_p2_p6_match_ml
 
 ## Notes
 
@@ -36,5 +35,5 @@ Both good and bad results:
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEyOTMwNTUxMzVdfQ==
+eyJoaXN0b3J5IjpbLTYwNzkzNTY2N119
 -->

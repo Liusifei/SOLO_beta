@@ -16,11 +16,9 @@ multi GPU (for example 8):
 ## Notes
 
 The code only implements the simplest version of SOLO:
-
-* without CoordConv
+* 1x: ```r50_p2_p6_match_ml.py```
+* 3x: ```r50_p2_p6_match_ml_aug.py```
 * using vanilla SOLO instead of Decoupled SOLO
-* 3x training schedule
-* using the default FPN featuremaps: in the paper it is with different specific strides and instance scale selection
 * implemented the simplest mask-nms: as the authors did not describe it in detail in the paper, the implemented nms is slow,  will improve it in the future.
 * **still in progress**
 
@@ -37,5 +35,5 @@ Both good and bad results:
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTI5NTc1NTk0Ml19
+eyJoaXN0b3J5IjpbLTEzNjQwODE1NjhdfQ==
 -->

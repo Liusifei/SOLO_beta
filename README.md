@@ -9,8 +9,11 @@ The code is based on [mmdetection](https://github.com/open-mmlab/mmdetection). P
 ### Basic
 Follows the same way as mmdetection.
 single GPU: (for pdb debug)
+
 ```python tools/train.py configs/solo/r50_p2_p6_match_ml.py --work_dir r50_p2_p6_match_ml```
+
 multi GPU (for example 8): 
+
 ```./tools/dist_train.sh configs/solo/r50_p2_p6_match_mlaug.py 8 --work_dir r50_p2_p6_match_ml_3X```
 
 ## Notes
@@ -51,5 +54,5 @@ The code only implements the simplest version of SOLO:
  - [x] Mask (cleared): per-instance dict_loss, ave over all instances in a batch
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNjg3NzkzNzc4LDE1NzAwNjMxODldfQ==
+eyJoaXN0b3J5IjpbMTcyNzU0OTk1NiwxNTcwMDYzMTg5XX0=
 -->

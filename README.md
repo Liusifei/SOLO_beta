@@ -46,9 +46,10 @@ The code only implements the simplest version of SOLO:
 ### Details
  - [ ] Classification:
 `flatten_cls_scores`: flattened w.r.t. all images and all levels
+
 `loss_cls = self.loss_cls(flatten_cls_scores, category_targets, avg_factor=num_pos + num_imgs)`
  - [x] Mask (cleared): per-instance dict_loss, ave over all instances in a batch
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTUwODI0MjgyMF19
+eyJoaXN0b3J5IjpbMTc5MTAxNzEwXX0=
 -->

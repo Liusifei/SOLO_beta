@@ -445,8 +445,8 @@ class SoloHead(nn.Module):
 				det_scs = np.zeros(n).astype(int)
 
 				for i in range(n):
-					det_bboxes[i, -1] = masks[i][-1]
-					det_labels[i] = masks[i][-2]
+					det_bboxes[i, -1] = masks[i][-2]
+					det_labels[i] = masks[i][-3]
 					det_masks.append(masks[i][0])
 					det_scs[i] = masks[i][-1]
 				det_masks = np.array(det_masks)
@@ -522,8 +522,8 @@ class SoloHead(nn.Module):
 					det_labels = np.zeros(n).astype(int)
 					det_scs = np.zeros(n).astype(int)
 					for i in range(n):
-						det_bboxes[i, -1] = masks[i][-1]
-						det_labels[i] = masks[i][-2]
+						det_bboxes[i, -1] = masks[i][-2]
+						det_labels[i] = masks[i][-3]
 						det_masks.append(masks[i][0])
 						det_scs[i] = masks[i][-1]
 					det_masks = np.array(det_masks)

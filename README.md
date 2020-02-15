@@ -57,7 +57,9 @@ The code only implements the simplest version of SOLO:
 
 `loss_mask = self.dict_weight * torch.mean(loss_mask)`
 
+ - [x] Dict loss register (02/15/2020)
+
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTQzOTU4MTc2OCwtNzExMjMxODQ2LDE3Mj
-c1NDk5NTYsMTU3MDA2MzE4OV19
+eyJoaXN0b3J5IjpbNjA0NzIyMDg2LDE0Mzk1ODE3NjgsLTcxMT
+IzMTg0NiwxNzI3NTQ5OTU2LDE1NzAwNjMxODldfQ==
 -->

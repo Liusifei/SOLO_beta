@@ -47,7 +47,7 @@ The code only implements the simplest version of SOLO:
 ### Network logic (need to check)
 ![](docs/network.png)
 ### Details (need to check)
- - [ ] Classification:
+ - [x] Classification:
 `flatten_cls_scores`: flattened w.r.t. all images and all levels
 
 `loss_cls = self.loss_cls(flatten_cls_scores, category_targets, avg_factor=num_pos + num_imgs)`
@@ -60,6 +60,6 @@ The code only implements the simplest version of SOLO:
  - [x] Dict loss register (02/15/2020)
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNjA0NzIyMDg2LDE0Mzk1ODE3NjgsLTcxMT
+eyJoaXN0b3J5IjpbOTY4OTk3OTY2LDE0Mzk1ODE3NjgsLTcxMT
 IzMTg0NiwxNzI3NTQ5OTU2LDE1NzAwNjMxODldfQ==
 -->

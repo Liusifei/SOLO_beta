@@ -50,8 +50,14 @@
 2020-02-14 07:52:05,189 - INFO - Epoch [1][400/7330]	lr: 0.00865, eta: 2 days, 3:16:16, time: 0.677, data_time: 0.047, memory: 8753, loss_cls: 0.7015, loss_mask: 2.1437, loss: 2.8452
 2020-02-14 07:52:38,707 - INFO - Epoch [1][450/7330]	lr: 0.00932, eta: 2 days, 3:00:57, time: 0.670, data_time: 0.041, memory: 8753, loss_cls: 0.7279, loss_mask: 2.0185, loss: 2.7464
 2020-02-14 07:53:12,154 - INFO - Epoch [1][500/7330]	lr: 0.00999, eta: 2 days, 2:47:58, time: 0.669, data_time: 0.047, memory: 8753, loss_cls: 0.7131, loss_mask: 2.0092, loss: 2.7223
-```
+``` - [ ] **Same-scale loss**
+`root@1037871:/instance_v1/SOLO_OURS# ./tools/dist_train.sh configs/solo/r50_p2_p6_match_aug.py 8 --work_dir r50_p2_p6_match_3X/`
+
+
+ - [ ] **Class branch w CE**
+ `root@1038535:/instance_v1/SOLO_OURS# ./tools/dist_train.sh configs/solo/r50_p2_p6_match_CE.py 8 --work_dir r50_p2_p6_match_CE_3X`
+
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNDY2NTA2MTkwLC03NzA4NTI0NjYsLTEwOD
-gyMjI3ODEsLTE1NTMyNzY5OTRdfQ==
+eyJoaXN0b3J5IjpbOTM3NDYzOTEyLDQ2NjUwNjE5MCwtNzcwOD
+UyNDY2LC0xMDg4MjIyNzgxLC0xNTUzMjc2OTk0XX0=
 -->

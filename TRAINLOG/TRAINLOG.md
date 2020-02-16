@@ -35,8 +35,10 @@ Average Recall (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.571
  - [ ] **Class branch w CE**
  `root@1038535:/instance_v1/SOLO_OURS# ./tools/dist_train.sh configs/solo/r50_p2_p6_match_CE.py 8 --work_dir r50_p2_p6_match_CE_3X`
 
+
+
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE3MzU5NjkzNSw5Mzc0NjM5MTIsNDY2NT
-A2MTkwLC03NzA4NTI0NjYsLTEwODgyMjI3ODEsLTE1NTMyNzY5
-OTRdfQ==
+eyJoaXN0b3J5IjpbLTcxNDE3MDAzLDkzNzQ2MzkxMiw0NjY1MD
+YxOTAsLTc3MDg1MjQ2NiwtMTA4ODIyMjc4MSwtMTU1MzI3Njk5
+NF19
 -->

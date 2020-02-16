@@ -1,13 +1,16 @@
 ## 02/13/2020
-# Exps with new settings
+### Exps with new settings
 
  1. Restore FPN to default
- 2. Conv unit 
- 3. [ ] **Multi-scale loss** 
+ 2. Conv unit x 7 + conv 1x1 on FPN head
+ 3. Downsample during conv 1x1 (deconv on p2)
+ 4. Fix mask branch loss to instance-wise dics_loss
+
+ 5. [ ] **Multi-scale loss** 
     `root@1034298:/instance_v1/SOLO_OURS# ./tools/dist_train.sh configs/solo/r50_p2_p6_match_mlaug.py 8 --work_dir r50_p2_p6_match_ml_3X/`
 
 
- 4. [ ] **Same-scale loss**
+ 6. [ ] **Same-scale loss**
 `root@1037871:/instance_v1/SOLO_OURS# ./tools/dist_train.sh configs/solo/r50_p2_p6_match_aug.py 8 --work_dir r50_p2_p6_match_3X/`
 
 ```
@@ -31,7 +34,7 @@ Average Recall (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.571
  `root@1038535:/instance_v1/SOLO_OURS# ./tools/dist_train.sh configs/solo/r50_p2_p6_match_CE.py 8 --work_dir r50_p2_p6_match_CE_3X`
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjg5MDYwNzkxLDkzNzQ2MzkxMiw0NjY1MD
-YxOTAsLTc3MDg1MjQ2NiwtMTA4ODIyMjc4MSwtMTU1MzI3Njk5
-NF19
+eyJoaXN0b3J5IjpbLTEwMjI4NDgyMzEsOTM3NDYzOTEyLDQ2Nj
+UwNjE5MCwtNzcwODUyNDY2LC0xMDg4MjIyNzgxLC0xNTUzMjc2
+OTk0XX0=
 -->

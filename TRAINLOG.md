@@ -15,6 +15,8 @@
 2020-02-14 03:28:26,155 - INFO - Epoch [1][450/7330]	lr: 0.00932, eta: 2 days, 13:46:14, time: 0.833, data_time: 0.040, memory: 7966, loss_cls: 0.6684, loss_mask: 1.5095, loss: 2.1778
 2020-02-14 03:29:05,899 - INFO - Epoch [1][500/7330]	lr: 0.00999, eta: 2 days, 13:23:50, time: 0.795, data_time: 0.037, memory: 7966, loss_cls: 0.6581, loss_mask: 1.5518, loss: 2.2098
 ```
+* Results
+** 
 
  - [ ] **Same-scale loss**
 `root@1037871:/instance_v1/SOLO_OURS# ./tools/dist_train.sh configs/solo/r50_p2_p6_match_aug.py 8 --work_dir r50_p2_p6_match_3X/`
@@ -50,6 +52,6 @@
 2020-02-14 07:53:12,154 - INFO - Epoch [1][500/7330]	lr: 0.00999, eta: 2 days, 2:47:58, time: 0.669, data_time: 0.047, memory: 8753, loss_cls: 0.7131, loss_mask: 2.0092, loss: 2.7223
 ```
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTc3MDg1MjQ2NiwtMTA4ODIyMjc4MSwtMT
-U1MzI3Njk5NF19
+eyJoaXN0b3J5IjpbNDY2NTA2MTkwLC03NzA4NTI0NjYsLTEwOD
+gyMjI3ODEsLTE1NTMyNzY5OTRdfQ==
 -->

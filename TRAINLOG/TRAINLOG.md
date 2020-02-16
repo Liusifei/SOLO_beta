@@ -5,6 +5,8 @@
  2. Conv unit x 7 + conv 1x1 on FPN head
  3. Downsample during conv 1x1 (deconv on p2)
  4. Fix mask branch loss to instance-wise dics_loss
+ 
+### Train lists
 
  5. [ ] **Multi-scale loss** 
     `root@1034298:/instance_v1/SOLO_OURS# ./tools/dist_train.sh configs/solo/r50_p2_p6_match_mlaug.py 8 --work_dir r50_p2_p6_match_ml_3X/`
@@ -34,7 +36,7 @@ Average Recall (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.571
  `root@1038535:/instance_v1/SOLO_OURS# ./tools/dist_train.sh configs/solo/r50_p2_p6_match_CE.py 8 --work_dir r50_p2_p6_match_CE_3X`
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEwMjI4NDgyMzEsOTM3NDYzOTEyLDQ2Nj
-UwNjE5MCwtNzcwODUyNDY2LC0xMDg4MjIyNzgxLC0xNTUzMjc2
-OTk0XX0=
+eyJoaXN0b3J5IjpbLTE3MzU5NjkzNSw5Mzc0NjM5MTIsNDY2NT
+A2MTkwLC03NzA4NTI0NjYsLTEwODgyMjI3ODEsLTE1NTMyNzY5
+OTRdfQ==
 -->

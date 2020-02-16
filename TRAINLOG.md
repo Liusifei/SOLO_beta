@@ -51,7 +51,8 @@
 2020-02-14 07:52:38,707 - INFO - Epoch [1][450/7330]	lr: 0.00932, eta: 2 days, 3:00:57, time: 0.670, data_time: 0.041, memory: 8753, loss_cls: 0.7279, loss_mask: 2.0185, loss: 2.7464
 2020-02-14 07:53:12,154 - INFO - Epoch [1][500/7330]	lr: 0.00999, eta: 2 days, 2:47:58, time: 0.669, data_time: 0.047, memory: 8753, loss_cls: 0.7131, loss_mask: 2.0092, loss: 2.7223
 ```
+
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNDY2NTA2MTkwLC03NzA4NTI0NjYsLTEwOD
-gyMjI3ODEsLTE1NTMyNzY5OTRdfQ==
+eyJoaXN0b3J5IjpbLTYyNTUzMTc4MCw0NjY1MDYxOTAsLTc3MD
+g1MjQ2NiwtMTA4ODIyMjc4MSwtMTU1MzI3Njk5NF19
 -->

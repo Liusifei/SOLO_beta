@@ -36,12 +36,12 @@ Average Recall (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.571
  `root@1038535:/instance_v1/SOLO_OURS# ./tools/dist_train.sh configs/solo/r50_p2_p6_match_CE.py 8 --work_dir r50_p2_p6_match_CE_3X`
 
 ## 02/16/2020
-1. Fix the  MMDistributedDataParallel() in the test.py, r
+1. Fix the  `MMDistributedDataParallel()` in the test.py, now the code can run via `tools/dist_test.sh with workers=0.
 
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTMwOTk3Nzk1MSwtMTg5NDAxNjgzLC03MT
+eyJoaXN0b3J5IjpbMTU0NTE2MzQxMCwtMTg5NDAxNjgzLC03MT
 QxNzAwMyw5Mzc0NjM5MTIsNDY2NTA2MTkwLC03NzA4NTI0NjYs
 LTEwODgyMjI3ODEsLTE1NTMyNzY5OTRdfQ==
 -->

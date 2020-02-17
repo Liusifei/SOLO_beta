@@ -1,7 +1,8 @@
 from __future__ import division
 import argparse
 import os
-
+import time
+import sys
 import torch
 from mmcv import Config
 from mmdet import __version__
@@ -41,6 +42,14 @@ def parse_args():
     args = parser.parse_args()
     if 'LOCAL_RANK' not in os.environ:
         os.environ['LOCAL_RANK'] = str(args.local_rank)
+
+    os.makedirs(args.work_dir, exist_ok=True)
+    args.logfile = open(os.path.join(args.work_dir,"logargs_{}.txt".format(time.time())),"w")
+    args.logfile.write(' '.join(sys.argv))
+    args.logfile.write('\n')
+    for k, v in args.__dict__.items():
+        args.logfile.write('{}:{}\n'.format(k,v))
+    args.logfile.close()
 
     return args
 

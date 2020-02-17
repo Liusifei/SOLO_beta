@@ -3,7 +3,7 @@
 
 ---
 
-<h2 id="changelog-0216-sifeil">Changelog 0216 (Sifeil)</h2>
+<h2 id="changelog-0216-sifeil">Changelog 0216 (sifeil)</h2>
 <ul>
 <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" checked="true" disabled=""> <a href="http://train.py">train.py</a>
 <ul>

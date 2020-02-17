@@ -29,6 +29,6 @@
 <h2 id="ablations-considered-bold-is-better">Ablations considered (bold is better)</h2>
 <ul>
 <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" checked="true" disabled=""> Unsample <strong>before</strong> or after branch-net (mask branch)</li>
-<li>[ ]</li>
+<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" checked="true" disabled="">  Focal loss, gamma=1.50, alpha=0.4: <code>r50_p2_p6_match-v2.py</code></li>
 </ul>
 

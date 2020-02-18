@@ -26,6 +26,10 @@
 </ul>
 <p><code>2020-02-16 22:19:50,321 - INFO - Start running, host: root@1037871, work_dir: /instance_v1/SOLO_OURS/r50_p2_p6_match_aug_0216</code></p>
 <p><code>2020-02-17 06:23:33,323 - INFO - Start running, host: root@1034753, work_dir: /instance_v1/SOLO_OURS/r50_p2_p6_match_1X</code></p>
+<p><code>./tools/train.py --local_rank=0 configs/solo/r50_p2_p6_match-v2.py --launcher pytorch --work_dir r50_p2_p6_match_1X_v2</code></p>
+<p><code>./tools/train.py --local_rank=6 configs/solo/r50_p2_p6_match-v3.py --launcher pytorch --work_dir r50_p2_p6_match_1X_v3</code></p>
+<p><code>./tools/train.py --local_rank=0 configs/solo/r50_p2_p6_match-v4.py --launcher pytorch --work_dir lossx4_match_1Xv4</code> (loss at 1/2)</p>
+<p><code>./tools/train.py --local_rank=5 configs/solo/r50_p2_p6_match_augv2.py --launcher pytorch --work_dir caffesgd_match_randscale</code></p>
 <h2 id="ablations-considered-bold-is-better">Ablations considered (bold is better)</h2>
 <ul>
 <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" checked="true" disabled=""> Unsample <strong>before</strong> or after branch-net (mask branch)</li>

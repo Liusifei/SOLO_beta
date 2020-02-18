@@ -47,13 +47,14 @@ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.548
 <p><code>./tools/train.py --local_rank=0 configs/solo/r50_p2_p6_match-v4.py --launcher pytorch --work_dir lossx4_match_1Xv4</code> (loss at 1/2)</p>
 <p><code>./tools/train.py --local_rank=5 configs/solo/r50_p2_p6_match_augv2.py --launcher pytorch --work_dir caffesgd_match_randscale</code></p>
 <hr>
-<p><code>root@1043887:/instance_v1/SOLO_OURS# ./tools/dist_train.sh configs/sol o/r50_p2_p6_match_aug.py 8 --work_dir r50_p2_p6_match_aug_fixgt</code></p>
+<p><code>root@1043887:/instance_v1/SOLO_OURS# ./tools/dist_train.sh configs/sol o/r50_p2_p6_match_aug.py 8 --work_dir r50_p2_p6_match_aug_fixgt</code> (use <em><strong>transform_fixgt</strong></em>)</p>
+<p><code>root@1043979:/instance_v1/SOLO_OURS# ./tools/dist_train.sh configs/solo/r50_p2_p6_match_aug.py 8 --work_dir r50_p2_p6_match_aug_fixgt_v2</code> (use <em><strong>transform_fixgtv2</strong></em>)</p>
 <h2 id="ablations-considered-bold-is-better">Ablations considered (bold is better)</h2>
 <ul>
 <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" checked="true" disabled=""> Unsample <strong>before</strong> or after branch-net (mask branch)</li>
 <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" checked="true" disabled="">  <code>r50_p2_p6_match-v2.py</code> Focal loss, gamma=2.20, alpha=0.3:  <strong>no difference</strong></li>
 <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" checked="true" disabled="">  Tried score_thr=0.05, <strong>no difference</strong></li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled=""> <code>r50_p2_p6_match-v3.py</code> add extra conv, add relu on top of fpn head</li>
+<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled=""> <code>r50_p2_p6_match-v3.py</code> add extra conv, add relu on top of fpn head (better at epoch 8, 1042705)</li>
 <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled=""> <code>/instance_v1/SOLO_OURS/caffesgd_match_randscale</code>:
 <ul>
 <li>tried caffe sgd</li>

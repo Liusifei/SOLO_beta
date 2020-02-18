@@ -64,6 +64,6 @@ changed to:<br>
 <li>no relu after fpn*</li>
 </ul>
 </li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled=""> <code>\r50_p2_p6_match_aug_fixgt</code>: fix cls gt in transform</li>
+<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled=""> <code>/r50_p2_p6_match_aug_fixgt</code>: fix cls gt in transform</li>
 </ul>
 

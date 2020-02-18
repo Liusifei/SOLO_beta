@@ -52,7 +52,7 @@ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.548
 <ul>
 <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" checked="true" disabled=""> Unsample <strong>before</strong> or after branch-net (mask branch)</li>
 <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" checked="true" disabled="">  <code>r50_p2_p6_match-v2.py</code> Focal loss, gamma=2.20, alpha=0.3:  <strong>no difference</strong></li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" checked="true" disabled="">  tried score_thr=0.05, <strong>no difference</strong></li>
+<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" checked="true" disabled="">  Tried score_thr=0.05, <strong>no difference</strong></li>
 <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled=""> <code>r50_p2_p6_match-v3.py</code> add extra conv, add relu on top of fpn head</li>
 <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled=""> <code>/instance_v1/SOLO_OURS/caffesgd_match_randscale</code>:
 <ul>
@@ -63,6 +63,6 @@ changed to:<br>
 <li>no relu after fpn*</li>
 </ul>
 </li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled=""> <code>\r50_p2_p6_match_aug_fixgt</code>: Fix cls gt in transform</li>
+<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled=""> <code>\r50_p2_p6_match_aug_fixgt</code>: fix cls gt in transform</li>
 </ul>
 

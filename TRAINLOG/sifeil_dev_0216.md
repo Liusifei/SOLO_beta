@@ -46,6 +46,8 @@ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.548
 <p><code>./tools/train.py --local_rank=6 configs/solo/r50_p2_p6_match-v3.py --launcher pytorch --work_dir r50_p2_p6_match_1X_v3</code></p>
 <p><code>./tools/train.py --local_rank=0 configs/solo/r50_p2_p6_match-v4.py --launcher pytorch --work_dir lossx4_match_1Xv4</code> (loss at 1/2)</p>
 <p><code>./tools/train.py --local_rank=5 configs/solo/r50_p2_p6_match_augv2.py --launcher pytorch --work_dir caffesgd_match_randscale</code></p>
+<hr>
+<p><code>root@1043887:/instance_v1/SOLO_OURS# ./tools/dist_train.sh configs/sol o/r50_p2_p6_match_aug.py 8 --work_dir r50_p2_p6_match_aug_fixgt</code></p>
 <h2 id="ablations-considered-bold-is-better">Ablations considered (bold is better)</h2>
 <ul>
 <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" checked="true" disabled=""> Unsample <strong>before</strong> or after branch-net (mask branch)</li>
@@ -61,5 +63,6 @@ changed to:<br>
 <li>no relu after fpn*</li>
 </ul>
 </li>
+<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled=""> <code>\r50_p2_p6_match_aug_fixgt</code>: Fix cls gt in transform</li>
 </ul>
 

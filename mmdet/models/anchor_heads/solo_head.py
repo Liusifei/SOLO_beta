@@ -227,9 +227,9 @@ class SoloHead(nn.Module):
 		for i in range(num_imgs):
 			ind = torch.nonzero(category_targets[i]).squeeze(-1)
 			ins_ind = point_ins[i][ind]
-			ins_mask = F.upsample_bilinear(gt_masks[i][ins_ind].to(mask_preds.device).unsqueeze(0), (self.loss_level*b_h, self.loss_level*b_w)).squeeze()
-			pred_mask = F.sigmoid(F.upsample_bilinear(mask_preds[i][ind].unsqueeze(0), (self.loss_level*b_h, self.loss_level*b_w)).squeeze())
-			loss_mask[i] = self.dict_loss_batch(pred_mask, ins_mask)
+			ins_mask = F.upsample_bilinear(gt_masks[i][ins_ind].to(mask_preds.device).unsqueeze(0), (self.loss_level*b_h, self.loss_level*b_w))[0]
+			pred_mask = F.sigmoid(F.upsample_bilinear(mask_preds[i][ind].unsqueeze(0), (self.loss_level*b_h, self.loss_level*b_w))[0])
+			loss_mask[i] = self.dict_loss_batch(pred_mask, ins_mask, reduce='sum')
 
 		loss_mask = self.dict_weight * torch.mean(loss_mask)
 		category_targets = torch.cat(category_targets)
@@ -259,8 +259,6 @@ class SoloHead(nn.Module):
 
 		mask_preds[4] = F.upsample_bilinear(mask_preds[4], (b_h3, b_w3))
 
-		# pdb.set_trace()
-
 		bound = [self.grid_num[i] ** 2 for i in range(5)]
 		bound = [0] + bound
 		for i in range(1, 6):
@@ -279,24 +277,23 @@ class SoloHead(nn.Module):
 
 		# calculate loss
 		loss_mask = torch.zeros(len(self.grid_num), num_imgs).to(mask_preds[0].device)
-		
-		mask_profs = []
-		for j in range(len(self.grid_num)):
-			mask_profs.append(F.sigmoid(mask_preds[j]))
 
 		t_num = 0
 		for i in range(num_imgs):
 			for j in range(len(self.grid_num)):
-				mask_ = mask_profs[j][i]
+				mask_ = mask_preds[j][i]
 				ind = torch.nonzero(category_targets[i][bound[j]:bound[j + 1]]).squeeze(-1)
 				if len(ind) > 0:
 					ins_ind = point_ins[i][bound[j]:bound[j + 1]][ind]
 					_, b_h_i, b_w_i = mask_.shape
-					gt_masks_ = F.upsample_nearest(gt_masks[i].float().unsqueeze(0), (b_h_i, b_w_i))[0]
-					ins_mask = gt_masks_[ins_ind].to(mask_.device)		
+
+					ins_mask = gt_masks[i][ins_ind].float().to(mask_.device)		
+					ins_mask = F.upsample_nearest(ins_mask.unsqueeze(0), (2*b_h_i, 2*b_w_i))[0]
 					pred_mask = mask_[ind]
-					loss_mask[j,i] = self.dict_loss_batch(pred_mask, ins_mask, reduce='sum')
+					pred_mask = F.sigmoid(F.upsample_bilinear(pred_mask.unsqueeze(0), (2*b_h_i, 2*b_w_i))[0])
+					loss_mask[j,i] = self.dict_loss_batch(pred_mask, ins_mask, reduce='sum')		
 					t_num += len(ind)
+
 
 		loss_mask = self.dict_weight * torch.sum(loss_mask)/t_num
 		category_targets = torch.cat(category_targets)

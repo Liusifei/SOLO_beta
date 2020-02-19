@@ -41,6 +41,7 @@ class SoloHead(nn.Module):
 				 strides=None,
 				 regress_ranges=None,
 				 dict_weight = 1.0,
+				 loss_level = 0.25,
 				 loss_cls=dict(
 					 type='FocalLoss',
 					 use_sigmoid=True,
@@ -69,6 +70,7 @@ class SoloHead(nn.Module):
 		self.norm_cfg = norm_cfg
 		self.fp16_enabled = False
 		self.grid_num=[40,36,24,16,12]
+		self.loss_level = int(loss_level / 0.125)
 		self.out_path = out_path
 		self._init_layers()
 
@@ -113,16 +115,8 @@ class SoloHead(nn.Module):
 						bias=self.norm_cfg is None))
 		self.solo_cls = nn.ModuleList([nn.Conv2d(
 			self.feat_channels, self.cls_out_channels, 1, stride=1, padding=0) for _ in self.grid_num])
-		# self.solo_mask = nn.ModuleList([nn.Conv2d(
-			# self.feat_channels, num**2, 1, stride=1, padding=0) for num in self.grid_num])
-		self.solo_mask = nn.ModuleList(
-			[nn.Conv2d(self.feat_channels, self.grid_num[0]**2, 1, stride=2, padding=0),
-			nn.Conv2d(self.feat_channels, self.grid_num[1]**2, 1, stride=1, padding=0),
-			nn.Conv2d(self.feat_channels, self.grid_num[2]**2, 1, stride=1, padding=0),
-			nn.Conv2d(self.feat_channels, self.grid_num[3]**2, 1, stride=1, padding=0),
-			nn.Conv2d(self.feat_channels, self.grid_num[4]**2, 1, stride=1, padding=0)
-			])
-
+		self.solo_mask = nn.ModuleList([nn.Conv2d(
+			self.feat_channels, num**2, 1, stride=1, padding=0) for num in self.grid_num])
 		
 		self.scales = nn.ModuleList([Scale(1.0) for _ in self.strides])
 
@@ -140,6 +134,11 @@ class SoloHead(nn.Module):
 
 
 	def forward(self, feats):
+		feats = list(feats)
+		_,_,b_h,b_w = feats[0].shape
+		feats[0] = F.upsample_bilinear(feats[0], (int(b_h/2.),int(b_w/2.)))
+		feats[4] = F.upsample_bilinear(feats[4], (int(b_h/8.),int(b_w/8.)))
+
 		cls_score, mask_score = multi_apply(self.forward_single, feats, self.solo_cls, self.solo_mask, self.grid_num)
 		return cls_score, mask_score
 
@@ -175,17 +174,19 @@ class SoloHead(nn.Module):
 		return 1 - ((2. * intersection + smooth) /
 			  ((iflat*iflat).sum() + (tflat*tflat).sum() + smooth))
 
-	def dict_loss_batch(self, input, target):
+	def dict_loss_batch(self, input, target, reduce='mean'):
 		smooth = 1.
 		b = input.size(0)
 		iflat = input.contiguous().view(b,-1)
 		tflat = target.contiguous().view(b,-1)
 		intersection = torch.sum(iflat * tflat, dim=1)
-
 		nu = 2. * intersection + smooth
 		de = torch.sum(iflat*iflat, dim=1) + torch.sum(tflat*tflat, dim=1) + smooth
 
-		return torch.mean(1-nu/de)
+		if reduce in 'mean':
+			return torch.mean(1-nu/de)
+		else:
+			return torch.sum(1-nu/de)
 
 	def loss(self,
 				cls_scores,
@@ -226,8 +227,8 @@ class SoloHead(nn.Module):
 		for i in range(num_imgs):
 			ind = torch.nonzero(category_targets[i]).squeeze(-1)
 			ins_ind = point_ins[i][ind]
-			ins_mask = gt_masks[i][ins_ind].to(mask_preds.device)
-			pred_mask = mask_preds[i][ind]
+			ins_mask = F.upsample_bilinear(gt_masks[i][ins_ind].to(mask_preds.device).unsqueeze(0), (self.loss_level*b_h, self.loss_level*b_w)).squeeze()
+			pred_mask = F.sigmoid(F.upsample_bilinear(mask_preds[i][ind].unsqueeze(0), (self.loss_level*b_h, self.loss_level*b_w)).squeeze())
 			loss_mask[i] = self.dict_loss_batch(pred_mask, ins_mask)
 
 		loss_mask = self.dict_weight * torch.mean(loss_mask)
@@ -283,6 +284,7 @@ class SoloHead(nn.Module):
 		for j in range(len(self.grid_num)):
 			mask_profs.append(F.sigmoid(mask_preds[j]))
 
+		t_num = 0
 		for i in range(num_imgs):
 			for j in range(len(self.grid_num)):
 				mask_ = mask_profs[j][i]
@@ -293,9 +295,10 @@ class SoloHead(nn.Module):
 					gt_masks_ = F.upsample_nearest(gt_masks[i].float().unsqueeze(0), (b_h_i, b_w_i))[0]
 					ins_mask = gt_masks_[ins_ind].to(mask_.device)		
 					pred_mask = mask_[ind]
-					loss_mask[j,i] = self.dict_loss_batch(pred_mask, ins_mask)
+					loss_mask[j,i] = self.dict_loss_batch(pred_mask, ins_mask, reduce='sum')
+					t_num += len(ind)
 
-		loss_mask = self.dict_weight * torch.mean(loss_mask)
+		loss_mask = self.dict_weight * torch.sum(loss_mask)/t_num
 		category_targets = torch.cat(category_targets)
 		num_pos = (category_targets > 0).sum()
 

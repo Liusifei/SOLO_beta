@@ -224,14 +224,16 @@ class SoloHead(nn.Module):
 		# calculate loss
 		loss_mask = torch.zeros(num_imgs).to(mask_preds[0].device)
 
+		t_num = 0
 		for i in range(num_imgs):
 			ind = torch.nonzero(category_targets[i]).squeeze(-1)
 			ins_ind = point_ins[i][ind]
 			ins_mask = F.upsample_bilinear(gt_masks[i][ins_ind].to(mask_preds.device).unsqueeze(0), (self.loss_level*b_h, self.loss_level*b_w))[0]
 			pred_mask = F.sigmoid(F.upsample_bilinear(mask_preds[i][ind].unsqueeze(0), (self.loss_level*b_h, self.loss_level*b_w))[0])
 			loss_mask[i] = self.dict_loss_batch(pred_mask, ins_mask, reduce='sum')
+			t_num += len(ind)
 
-		loss_mask = self.dict_weight * torch.mean(loss_mask)
+		loss_mask = self.dict_weight * torch.sum(loss_mask)/t_num
 		category_targets = torch.cat(category_targets)
 		num_pos = (category_targets > 0).sum()
 

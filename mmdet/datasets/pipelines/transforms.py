@@ -5,7 +5,10 @@ from numpy import random
 import pdb
 from mmdet.core.evaluation.bbox_overlaps import bbox_overlaps
 from ..registry import PIPELINES
+from scipy import ndimage
+
 INF = 1e8
+
 
 @PIPELINES.register_module
 class Resize(object):
@@ -346,7 +349,7 @@ class RandomCrop(object):
         if 'gt_bboxes' in results:
             gt_bboxes = results['gt_bboxes']
             valid_inds = (gt_bboxes[:, 2] > gt_bboxes[:, 0]) & (
-                gt_bboxes[:, 3] > gt_bboxes[:, 1])
+                    gt_bboxes[:, 3] > gt_bboxes[:, 1])
             # if no gt bbox remains after cropping, just skip this image
             if not np.any(valid_inds):
                 return None
@@ -359,12 +362,11 @@ class RandomCrop(object):
                 valid_gt_masks = []
                 for i in np.where(valid_inds)[0]:
                     gt_mask = results['gt_masks'][i][crop_y1:crop_y2,
-                                                     crop_x1:crop_x2]
+                              crop_x1:crop_x2]
                     valid_gt_masks.append(gt_mask)
                 results['gt_masks'] = np.stack(valid_gt_masks)
 
         return results
-        
 
     def __repr__(self):
         return self.__class__.__name__ + '(crop_size={})'.format(
@@ -499,8 +501,8 @@ class PhotoMetricDistortion(object):
         repr_str = self.__class__.__name__
         repr_str += ('(brightness_delta={}, contrast_range={}, '
                      'saturation_range={}, hue_delta={})').format(
-                         self.brightness_delta, self.contrast_range,
-                         self.saturation_range, self.hue_delta)
+            self.brightness_delta, self.contrast_range,
+            self.saturation_range, self.hue_delta)
         return repr_str
 
 
@@ -598,8 +600,8 @@ class MinIoURandomCrop(object):
                 # center of boxes should inside the crop img
                 center = (boxes[:, :2] + boxes[:, 2:]) / 2
                 mask = (center[:, 0] > patch[0]) * (
-                    center[:, 1] > patch[1]) * (center[:, 0] < patch[2]) * (
-                        center[:, 1] < patch[3])
+                        center[:, 1] > patch[1]) * (center[:, 0] < patch[2]) * (
+                               center[:, 1] < patch[3])
                 if not mask.any():
                     continue
                 boxes = boxes[mask]
@@ -643,6 +645,7 @@ class Corrupt(object):
             self.corruption, self.severity)
         return repr_str
 
+
 @PIPELINES.register_module
 class SoloTrainTrans(object):
     def __init__(self):
@@ -654,32 +657,41 @@ class SoloTrainTrans(object):
             results[k] for k in ('img', 'gt_bboxes', 'gt_labels', 'gt_masks')
         ]
 
-        # pdb.set_trace()
-
         img_h, img_w = img.shape[0], img.shape[1]
         scale_ranges = ((1, 96), (48, 192), (96, 384), (192, 768), (384, 2048))
         fpn_size = [40, 36, 24, 16, 12]
 
-        #prepare category map
+        # prepare category map
         obj_num = boxes.shape[0]
         category_targets, point_ins = [], []
         for i in range(5):
             category_targets.append(np.zeros((fpn_size[i], fpn_size[i])))
-            point_ins.append(np.ones((fpn_size[i], fpn_size[i]))*-1)
-        #calculate box boundary
+            point_ins.append(np.ones((fpn_size[i], fpn_size[i])) * -1)
+        # calculate box boundary
         x1, y1, x2, y2 = boxes[:, 0], boxes[:, 1], boxes[:, 2], boxes[:, 3]
 
-        x_mean = (x1+x2)/2
-        y_mean = (y1+y2)/2
-        hl = (y2-y1)
-        wl = (x2-x1)
+        # x_mean = 0.5 * (x1 + x2)
+        # y_mean = 0.5 * (y1 + y2)
+        hl = (y2 - y1) + 1
+        wl = (x2 - x1) + 1
         gt_areas = np.sqrt(hl * wl)
 
+        masks_center = []
+        for i in range(masks.shape[0]):
+            cent_ = ndimage.measurements.center_of_mass(masks[i])
+            if not np.isnan(cent_).all():
+                masks_center.append(cent_)
+            else:
+                masks_center.append((0.5 * (y1[i] + y2[i]), 0.5 * (x1[i] + x2[i])))
+        masks_center = np.stack(masks_center)
+
+        x_mean = masks_center[:,1]
+        y_mean = masks_center[:,0]
         ratio = 0.1
-        left_raw = x_mean-ratio*wl
-        right_raw = x_mean+ratio*wl
-        top_raw = y_mean-ratio*hl
-        bottom_raw = y_mean+ratio*hl
+        left_raw = (x_mean - ratio * wl).clip(0,img_w-1)
+        right_raw = (x_mean + ratio * wl).clip(0,img_w-1)
+        top_raw = (y_mean - ratio * hl).clip(0,img_h-1)
+        bottom_raw = (y_mean + ratio * hl).clip(0,img_h-1)
 
         ins_list = np.array(range(obj_num))
         # label assign for each box
@@ -687,14 +699,16 @@ class SoloTrainTrans(object):
             # num of instances, scale for each instance
             hit_indices = ((gt_areas >= scale_ranges[i][0]) &
                            (gt_areas <= scale_ranges[i][1])).nonzero()[0].flatten()
-            # pdb.set_trace()
             if len(hit_indices) > 0:
+                hit_indices_order = np.argsort(-gt_areas[hit_indices])
+                hit_indices = hit_indices[hit_indices_order]
+
                 h, w = img_h / fpn_size[i], img_w / fpn_size[i]
                 pos_category = labels[hit_indices]
-                pos_left = (np.floor(left_raw[hit_indices] / w)).astype(int)
-                pos_right = (np.floor(right_raw[hit_indices] / w)).astype(int)+1
-                pos_top = (np.floor(top_raw[hit_indices] / h)).astype(int)
-                pos_bottom = (np.floor(bottom_raw[hit_indices] / h)).astype(int)+1
+                pos_left = (np.floor(left_raw[hit_indices] / w)).clip(0, fpn_size[i] - 1).astype(int)
+                pos_right = (np.floor(right_raw[hit_indices] / w)).clip(0, fpn_size[i] - 1).astype(int)
+                pos_top = (np.floor(top_raw[hit_indices] / h)).clip(0, fpn_size[i] - 1).astype(int)
+                pos_bottom = (np.floor(bottom_raw[hit_indices] / h)).clip(0, fpn_size[i] - 1).astype(int)
                 pos_instance = ins_list[hit_indices].tolist()
 
                 for j in range(len(hit_indices)):
@@ -703,20 +717,26 @@ class SoloTrainTrans(object):
                     pos_top_ = pos_top[j]
                     pos_bottom_ = pos_bottom[j]
 
-                    row_ = np.array(range(pos_top_, pos_bottom_)).reshape(-1, 1)
+                    row_ = np.array(range(pos_top_, pos_bottom_+1)).reshape(-1, 1)
                     row_num = row_.shape[0]
 
-                    col_ = np.array(range(pos_left_, pos_right_)).reshape(1, -1)
+                    col_ = np.array(range(pos_left_, pos_right_+1)).reshape(1, -1)
                     col_num = col_.shape[1]
 
-                    row_grid = np.tile(row_,(1, col_num)).reshape(row_num*col_num).tolist()
-                    col_grid = np.tile(col_,(row_num, 1)).reshape(row_num*col_num).tolist()
-                    category_targets[i][row_grid, col_grid] = pos_category[j]
+                    row_grid = np.tile(row_, (1, col_num)).reshape(row_num * col_num).tolist()
+                    col_grid = np.tile(col_, (row_num, 1)).reshape(row_num * col_num).tolist()
+                    try:
+                        category_targets[i][row_grid, col_grid] = pos_category[j]
+                    except:
+                        print(masks_center)
                     point_ins[i][row_grid, col_grid] = pos_instance[j]
 
-        category_target = np.concatenate((category_targets[0].flatten(), category_targets[1].flatten(), category_targets[2].flatten(), category_targets[3].flatten(), category_targets[4].flatten()),axis=0).astype(int).tolist()
-        #points for one instance larger than 3: need to be fixed
-        point_ins = np.concatenate((point_ins[0].flatten(), point_ins[1].flatten(), point_ins[2].flatten(), point_ins[3].flatten(), point_ins[4].flatten()), axis=0).astype(int).tolist()
+        category_target = np.concatenate((category_targets[0].flatten(), category_targets[1].flatten(),
+                                          category_targets[2].flatten(), category_targets[3].flatten(),
+                                          category_targets[4].flatten()), axis=0).astype(int).tolist()
+        # points for one instance larger than 3: need to be fixed
+        point_ins = np.concatenate((point_ins[0].flatten(), point_ins[1].flatten(), point_ins[2].flatten(),
+                                    point_ins[3].flatten(), point_ins[4].flatten()), axis=0).astype(int).tolist()
         results['category_targets'] = category_target
         results['point_ins'] = point_ins
 

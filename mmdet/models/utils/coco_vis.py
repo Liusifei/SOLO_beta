@@ -63,8 +63,11 @@ def ins_gt_color(data):
 	img_name = img_info['filename'].split('/')[-1][:-4]
 	img_shape = img_info['img_shape']
 	ori_shape = img_info['ori_shape']
+	pad_shape = img_info['pad_shape']
+
 	crop_h, crop_w, _ = img_shape
 	ori_h, ori_w, _ = ori_shape
+	pad_h, pad_w, _ = pad_shape
 
 	mean = img_info['img_norm_cfg']['mean']
 	std = img_info['img_norm_cfg']['std']
@@ -105,32 +108,51 @@ def ins_gt_color(data):
 		category_targets_j = category_targets[bound[j]:bound[j + 1]]
 		category_targets_j_ = category_targets_j.reshape((grid_num[j],grid_num[j],1))
 		category_targets_j_ = np.tile(category_targets_j_, (1,1,3))
+
+		category_targets_j_ = cv2.resize(np.uint8(category_targets_j_), (pad_w, pad_h),
+										 interpolation = cv2.INTER_NEAREST)
+		category_targets_j_ = category_targets_j_[:crop_h, :crop_w, :]
 		category_targets_j_ = cv2.resize(np.uint8(category_targets_j_), (ori_w, ori_h),
 										 interpolation = cv2.INTER_NEAREST)
-
+		category_targets_j_copy = np.zeros(category_targets_j_.shape)
 		ind = np.nonzero(category_targets_j)[0]
 		ins_ind = point_ins[bound[j]:bound[j + 1]][ind]
+
+		point_ins_j = point_ins[bound[j]:bound[j + 1]]
+		point_ins_j_ = point_ins_j.reshape((grid_num[j],grid_num[j],1))
+		point_ins_j_ = np.tile(point_ins_j_, (1,1,3))
+
+		point_ins_j_ = cv2.resize(np.uint8(point_ins_j_), (pad_w, pad_h),
+										 interpolation = cv2.INTER_NEAREST)
+		point_ins_j_ = point_ins_j_[:crop_h, :crop_w, :]
+		point_ins_j_ = cv2.resize(np.uint8(point_ins_j_), (ori_w, ori_h),
+										 interpolation = cv2.INTER_NEAREST)
 		gt_masks_j = gt_masks[ins_ind]
 
 		gt_boxes_j = gt_boxes[ins_ind]
 		gt_labels_j = gt_labels[ins_ind]
 		img_ = img.copy()
+
 		for index, (bbox, label) in enumerate(zip(gt_boxes_j, gt_labels_j)):
-			color_mask = np.random.randint(0, 256, (1,3), dtype=np.uint8)
+			# if index == 2 or index == 11:
+			color_mask = np.random.randint(0, 200, (1,3), dtype=np.uint8)
 
 			# bbox_color = (int(color_mask[0,0]),int(color_mask[0,1]),int(color_mask[0,2]))
-
+			# import pdb
+			# pdb.set_trace()
 			# color_mask = np.array([0, 0, 255])
 
 			img_[gt_masks_j[index]] = img_[gt_masks_j[index]] * 0.5 + color_mask * 0.5
 
-			category_targets_j_[category_targets_j_[:,:,0]==gt_labels_j[index]] = color_mask
+			# category_targets_j_copy[category_targets_j_[:,:,0]==gt_labels_j[index]] = color_mask
+
+			category_targets_j_copy[point_ins_j_[:,:,0] == ins_ind[index]] = color_mask
 
 			bbox_int = bbox.astype(np.int32)
 			left_top = (bbox_int[0], bbox_int[1])
 			right_bottom = (bbox_int[2], bbox_int[3])
 			cv2.rectangle(img_, left_top, right_bottom, bbox_color, thickness=2)
-			cv2.rectangle(category_targets_j_, left_top, right_bottom, bbox_color, thickness=2)
+			cv2.rectangle(category_targets_j_copy, left_top, right_bottom, bbox_color, thickness=2)
 
 			# label = label - 1
 			label_text = CLASSES[
@@ -138,16 +160,16 @@ def ins_gt_color(data):
 			if len(bbox) > 4:
 				label_text += '|{:.02f}'.format(bbox[-1])
 			label_text = str(label) + ':' + label_text
-			# cv2.putText(img, label_text, (bbox_int[0], bbox_int[1] - 2),
-			#             cv2.FONT_HERSHEY_COMPLEX, font_scale, text_color)
+
 			cv2.putText(img_, label_text, (bbox_int[0], bbox_int[1] - 2),
 						cv2.FONT_HERSHEY_DUPLEX, 0.7, text_color, 1)
-			cv2.putText(category_targets_j_, label_text, (bbox_int[0], bbox_int[1] - 2),
+			cv2.putText(category_targets_j_copy, label_text, (bbox_int[0], bbox_int[1] - 2),
 						cv2.FONT_HERSHEY_DUPLEX, 0.7, text_color, 1)
+
 		# img_ = img_[:crop_h, :crop_w, :]
 		# img_ = cv2.resize(img_, (ori_w, ori_h))
 		img_list.append(img_)
-		cls_list.append(category_targets_j_)
+		cls_list.append(category_targets_j_copy)
 
 	return img_list, cls_list, img_name
 

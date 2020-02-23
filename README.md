@@ -58,8 +58,10 @@ The code only implements the simplest version of SOLO:
 `loss_mask = self.dict_weight * torch.mean(loss_mask)`
 
  - [x] Dict loss register (02/15/2020)
-
+ - [x] Fix class gt from bbo
+ 
+### Current result
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbOTY4OTk3OTY2LDE0Mzk1ODE3NjgsLTcxMT
-IzMTg0NiwxNzI3NTQ5OTU2LDE1NzAwNjMxODldfQ==
+eyJoaXN0b3J5IjpbLTE4OTQ1NjQ1MzMsMTQzOTU4MTc2OCwtNz
+ExMjMxODQ2LDE3Mjc1NDk5NTYsMTU3MDA2MzE4OV19
 -->

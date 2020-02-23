@@ -58,10 +58,27 @@ The code only implements the simplest version of SOLO:
 `loss_mask = self.dict_weight * torch.mean(loss_mask)`
 
  - [x] Dict loss register (02/15/2020)
- - [x] Fix class gt from bbo
+ - [x] Fix class gt from bbox center to segm mess center
  
 ### Current result
+`./tools/dist_train.sh configs/solo/r50_p2_p6_match_ml.py 8 --work_dir fixgtv4_ml1X`
+
+**score_thr=0.05**
+```
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.306
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.505
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.318
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.103
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.334
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.469
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.266
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.396
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.414
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.181
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.469
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.595
+```
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE4OTQ1NjQ1MzMsMTQzOTU4MTc2OCwtNz
-ExMjMxODQ2LDE3Mjc1NDk5NTYsMTU3MDA2MzE4OV19
+eyJoaXN0b3J5IjpbLTY1ODY5NDAwNCwxNDM5NTgxNzY4LC03MT
+EyMzE4NDYsMTcyNzU0OTk1NiwxNTcwMDYzMTg5XX0=
 -->

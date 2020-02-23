@@ -60,7 +60,7 @@ The code only implements the simplest version of SOLO:
  - [x] Dict loss register (02/15/2020)
  - [x] Fix class gt from bbox center to segm mess center
  
-### Current result
+### Current result for 1X
 `./tools/dist_train.sh configs/solo/r50_p2_p6_match_ml.py 8 --work_dir fixgtv4_ml1X`
 
 **score_thr=0.05**
@@ -79,6 +79,6 @@ The code only implements the simplest version of SOLO:
  Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.595
 ```
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTY1ODY5NDAwNCwxNDM5NTgxNzY4LC03MT
-EyMzE4NDYsMTcyNzU0OTk1NiwxNTcwMDYzMTg5XX0=
+eyJoaXN0b3J5IjpbLTE3ODU5NjI1NjIsMTQzOTU4MTc2OCwtNz
+ExMjMxODQ2LDE3Mjc1NDk5NTYsMTU3MDA2MzE4OV19
 -->

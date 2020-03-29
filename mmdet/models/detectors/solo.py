@@ -25,8 +25,8 @@ class Solo(SingleStageDetector):
                       gt_bboxes,
                       gt_labels,
                       gt_masks,
-                      category_targets,
-                      point_ins,
+                      category_targets=None,
+                      point_ins=None,
                       gt_bboxes_ignore=None):
 
         # pdb.set_trace()
@@ -36,7 +36,10 @@ class Solo(SingleStageDetector):
         # outs[0] denotes the five category branches
         # outs[1] denotes the five mask branches
 
-        loss_inputs = outs + (gt_bboxes, gt_labels, gt_masks,
+        if category_targets is None:
+          loss_inputs = outs + (gt_bboxes, gt_labels, gt_masks,img_metas, self.train_cfg)
+        else:
+          loss_inputs = outs + (gt_bboxes, gt_labels, gt_masks,
                              category_targets,point_ins,
                              img_metas, self.train_cfg)
         if self.multilevel:

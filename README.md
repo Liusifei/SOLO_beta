@@ -59,6 +59,7 @@ The code only implements the simplest version of SOLO:
 
  - [x] Dict loss register (02/15/2020)
  - [x] Fix class gt from bbox center to segm mess center
+ - [x] 03/29: update Solo assignment in utils and detectors 
  
 ### Current result for 1X
 `./tools/dist_train.sh configs/solo/r50_p2_p6_match_ml.py 8 --work_dir fixgtv4_ml1X`
@@ -78,7 +79,24 @@ The code only implements the simplest version of SOLO:
  Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.469
  Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.595
 ```
+### Current result for 3X
+ `./tools/dist_train.sh configs/solo/soloassign_ml_aug.py 8 --work_dir soloassign_ml_3X`
+ ```
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.338
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.546
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.354
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.132
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.370
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.509
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.284
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.427
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.446
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.215
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.504
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.624
+```
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE3ODU5NjI1NjIsMTQzOTU4MTc2OCwtNz
-ExMjMxODQ2LDE3Mjc1NDk5NTYsMTU3MDA2MzE4OV19
+eyJoaXN0b3J5IjpbNDA3MTM2NzI5LDU1NTUyMjUwNSwtMTc4NT
+k2MjU2MiwxNDM5NTgxNzY4LC03MTEyMzE4NDYsMTcyNzU0OTk1
+NiwxNTcwMDYzMTg5XX0=
 -->
